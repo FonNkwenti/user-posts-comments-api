@@ -10,8 +10,8 @@ provider:
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.postsTableName}
 
-  custom:
-    postsTableName: posts-table-${self:provider.stage}
+custom:
+  postsTableName: posts-table-${self:provider.stage}
 
   httpApi:
     cors: true
