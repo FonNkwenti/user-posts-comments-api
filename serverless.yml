@@ -1,0 +1,74 @@
+service: sls-crud-api
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: us-east-1
+  environment:
+    DYNAMODB_TABLE_NAME: ${self:custom.postsTableName}
+
+  custom:
+    postsTableName: posts-table-${self:provider.stage}
+
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Scan
+            - dynamodb:Query
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:GetItem
+            - dynamodb:DeleteItem
+          Resource: !GetAtt PostsTable.Arn #4 the permissions will be applied to the DynamoDB table itself and the second resource is an index on the table
+
+custom:
+  postsTableName: posts-table-${self:provider.stage}
+
+functions:
+  createUser:
+    handler: backend/users.create
+    name: create-user
+    memorySize: 128 # allocated memory in mb
+    timeout: 5 # units in seconds
+    events:
+      - http:
+          path: /users
+          method: POST
+
+resources:
+  Resources:
+    postsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.postsTableName}
+        AttributeDefinitions:
+          - AttributeName: "PK"
+            AttributeType: "S"
+          - AttributeName: "SK"
+            AttributeType: "S"
+          - AttributeName: "status"
+            AttributeType: "S"
+
+        KeySchema:
+          - AttributeName: "PK"
+            KeyType: "HASH"
+          - AttributeName: "SK"
+            KeyType: "RANGE"
+        ProvisionedThroughput:
+          ReadCapacityUnits: "1"
+          WriteCapacityUnits: "1"
+        GlobalSecondaryIndexes:
+          - IndexName: "GSI1"
+            KeySchema:
+              - AttributeName: "status"
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: "1"
+              WriteCapacityUnits: "1"

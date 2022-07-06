@@ -1,0 +1,26 @@
+{
+  "name": "sls-api-node-aws",
+  "version": "1.0.0",
+  "description": "user post and comments api on aws",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FonNkwenti/user-posts-comments-api.git"
+  },
+  "author": "FonNkwenti",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FonNkwenti/user-posts-comments-api/issues"
+  },
+  "homepage": "https://github.com/FonNkwenti/user-posts-comments-api#readme",
+  "devDependencies": {
+    "aws-sdk": "^2.1168.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "uuidv4": "^6.2.13"
+  }
+}
