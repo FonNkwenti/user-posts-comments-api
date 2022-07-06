@@ -28,9 +28,6 @@ custom:
             - dynamodb:DeleteItem
           Resource: !GetAtt PostsTable.Arn #4 the permissions will be applied to the DynamoDB table itself and the second resource is an index on the table
 
-custom:
-  postsTableName: posts-table-${self:provider.stage}
-
 functions:
   createUser:
     handler: backend/users.create
