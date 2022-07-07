@@ -5,6 +5,7 @@ service: sls-crud-api
 provider:
   name: aws
   runtime: nodejs16.x
+  stage: dev
   region: us-east-1
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.postsTableName} #store DB name which we will be able to access from our Lambdas.
