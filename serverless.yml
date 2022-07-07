@@ -10,11 +10,6 @@ provider:
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.postsTableName} #store DB name which we will be able to access from our Lambdas.
 
-custom:
-  postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
-plugins:
-  - serverless-iam-roles-per-function
-
   # httpApi:
   #   cors: true
   iam:
@@ -32,6 +27,11 @@ plugins:
           #Resource: !GetAtt postsTable.Arn #4 the permissions will be applied to the DynamoDB table itself and the second resource is an index on the table
           Resource: "*"
 
+custom:
+  postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
+plugins:
+  - serverless-iam-roles-per-function
+
 functions:
   createUser:
     handler: backend/users.create
@@ -42,15 +42,13 @@ functions:
       - http:
           path: /users
           method: POST
-    iam:
-      role:
-        statements:
-          - Effect: "Allow"
-            Action:
-              - "*"
-              # - "dynamodb:GetItem"
-            Resource: "*"
-            # Resource: !GetAtt PostsTable.Arn
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "*"
+          # - "dynamodb:GetItem"
+        Resource: "*"
+        # Resource: !GetAtt PostsTable.Arn
 
 resources:
   Resources:
