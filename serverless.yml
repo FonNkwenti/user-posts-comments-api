@@ -8,8 +8,8 @@ provider:
   # stage: dev
   # region: us-east-1
   environment:
-    # DYNAMODB_TABLE_NAME: ${self:custom.postsTableName} #store DB name which we will be able to access from our Lambdas.
-    DYNAMODB_TABLE_NAME: ${self:service}-${sls:stage} #store DB name which we will be able to access from our Lambdas.
+    DYNAMODB_TABLE_NAME: ${self:custom.postsTableName} #store DB name which we will be able to access from our Lambdas.
+    # DYNAMODB_TABLE_NAME: ${self:service}-${sls:stage} #store DB name which we will be able to access from our Lambdas.
 
   # httpApi:
   #   cors: true
@@ -28,8 +28,8 @@ provider:
   #         #Resource: !GetAtt postsTable.Arn #4 the permissions will be applied to the DynamoDB table itself and the second resource is an index on the table
   #         Resource: "*"
 
-# custom:
-#   postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
+custom:
+  postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
 
 plugins:
   - serverless-iam-roles-per-function
@@ -61,7 +61,8 @@ resources:
     postsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:provider.environment.DYNAMODB_TABLE_NAME} # this is the name that will appear on the AWS Cloud. we will pull the name from our custom resource
+        TableName: ${self:custom.postsTableName} # this is the name that will appear on the AWS Cloud. we will pull the name from our custom resource
+        # TableName: ${self:provider.environment.DYNAMODB_TABLE_NAME} # this is the name that will appear on the AWS Cloud. we will pull the name from our custom resource
         AttributeDefinitions: # specify an array of attributes to describe the key schema and indexes for the table. In other words the index which we will use to query the table
           - AttributeName: PK
             AttributeType: S
