@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/FonNkwenti/user-posts-comments-api#readme",
   "devDependencies": {
-    "aws-sdk": "^2.1168.0"
+    "aws-sdk": "^2.1168.0",
+    "serverless-iam-roles-per-function": "^3.2.0"
   },
   "dependencies": {
     "dotenv": "^16.0.1",

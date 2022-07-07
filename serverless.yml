@@ -12,9 +12,11 @@ provider:
 
 custom:
   postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
+plugins:
+  - serverless-iam-roles-per-function
 
-  # httpApi:
-  #   cors: true
+  httpApi:
+    cors: true
   iam:
     role:
       statements:
@@ -40,6 +42,15 @@ functions:
       - http:
           path: /users
           method: POST
+    iam:
+      role:
+        statements:
+          - Effect: "Allow"
+            Action:
+              - "*"
+              # - "dynamodb:GetItem"
+            Resource: "*"
+            # Resource: !GetAtt PostsTable.Arn
 
 resources:
   Resources:
