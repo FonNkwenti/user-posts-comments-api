@@ -30,9 +30,9 @@ provider:
   #         #Resource: !GetAtt postsTable.Arn #4 the permissions will be applied to the DynamoDB table itself and the second resource is an index on the table
   #         Resource: "*"
 
-  custom:
-    postsTableName: posts-comments-table
-    # postsTableName: posts-table-${sls:stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
+custom:
+  # postsTableName: posts-comments-table
+  postsTableName: posts-comments-table-${sls:stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
   #   postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
 
 plugins:
