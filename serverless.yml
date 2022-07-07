@@ -15,8 +15,8 @@ custom:
 plugins:
   - serverless-iam-roles-per-function
 
-  httpApi:
-    cors: true
+  # httpApi:
+  #   cors: true
   iam:
     role:
       statements:
