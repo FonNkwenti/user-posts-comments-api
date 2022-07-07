@@ -1,5 +1,5 @@
 org: fonnkwenti
-app: http-api
+#app: http-api
 service: sls-crud-api
 
 provider:
