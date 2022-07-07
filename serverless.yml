@@ -8,8 +8,8 @@ provider:
   # stage: dev
   # region: us-east-1
   environment:
-    DYNAMODB_TABLE_NAME: ${self:custom.postsTableName}-${sls:stage} #store DB name which we will be able to access from our Lambdas.
-    # DYNAMODB_TABLE_NAME: ${self:service}-${sls:stage} #store DB name which we will be able to access from our Lambdas.
+    # DYNAMODB_TABLE_NAME: ${self:custom.postsTableName}-${sls:stage} #store DB name which we will be able to access from our Lambdas.
+    DYNAMODB_TABLE_NAME: ${self:service}-${sls:stage} #store DB name which we will be able to access from our Lambdas.
 
   # httpApi:
   #   cors: true
