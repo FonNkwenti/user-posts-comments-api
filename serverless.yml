@@ -1,4 +1,4 @@
-org: fonnkwenti
+#org: fonnkwenti
 app: http-api
 service: sls-crud-api
 
