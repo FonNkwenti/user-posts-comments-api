@@ -8,7 +8,7 @@ provider:
   stage: dev
   region: us-east-1
   environment:
-    DYNAMODB_TABLE_NAME: ${self:custom.postTableName} #store DB name which we will be able to access from our Lambdas.
+    DYNAMODB_TABLE_NAME: ${self:custom.postsTableName} #store DB name which we will be able to access from our Lambdas.
 
 custom:
   postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
