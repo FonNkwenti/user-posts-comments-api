@@ -32,7 +32,7 @@ jobs:
       - name: serverless deploy
         uses: serverless/github-action@v3.1
         with:
-          args: remove --stage ${{ inputs.stage }} --region ${{ inputs.region }}
+          args: deploy --stage ${{ inputs.stage }} --region ${{ inputs.region }}
           #args: deploy --region us-west-1
           # you can use this for multi-stage ci/cd
         env:
