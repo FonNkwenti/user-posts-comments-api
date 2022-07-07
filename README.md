@@ -20,7 +20,6 @@ The GitHub Actions Workflows will deploy to separate AWS Regions as an easy way 
 [x] User
 [x] Post
 [x] Comment
-[]
 
 #### User
 
