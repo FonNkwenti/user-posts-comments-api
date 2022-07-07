@@ -8,13 +8,13 @@ provider:
   stage: dev
   region: us-east-1
   environment:
-    DYNAMODB_TABLE_NAME: ${self:service}-${sls:stage}
+    DYNAMODB_TABLE_NAME: ${self:custom.postTableName} #store DB name which we will be able to access from our Lambdas.
 
 custom:
-  postsTableName: posts-table-${self:provider.stage}
+  postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
 
-  httpApi:
-    cors: true
+  # httpApi:
+  #   cors: true
   iam:
     role:
       statements:
@@ -26,14 +26,16 @@ custom:
             - dynamodb:UpdateItem
             - dynamodb:GetItem
             - dynamodb:DeleteItem
-          Resource: !GetAtt postsTable.Arn #4 the permissions will be applied to the DynamoDB table itself and the second resource is an index on the table
+            - "*"
+          #Resource: !GetAtt postsTable.Arn #4 the permissions will be applied to the DynamoDB table itself and the second resource is an index on the table
+          Resource: "*"
 
 functions:
   createUser:
     handler: backend/users.create
-    name: create-user
-    memorySize: 128 # allocated memory in mb
-    timeout: 5 # units in seconds
+    #name: create-user
+    #memorySize: 128 # allocated memory in mb
+    #timeout: 5 # units in seconds
     events:
       - http:
           path: /users
@@ -44,30 +46,30 @@ resources:
     postsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.postsTableName}
-        AttributeDefinitions:
-          - AttributeName: "PK"
-            AttributeType: "S"
-          - AttributeName: "SK"
-            AttributeType: "S"
-          - AttributeName: "status"
-            AttributeType: "S"
+        TableName: ${self:custom.postsTableName} # this is the name that will appear on the AWS Cloud. we will pull the name from our custom resource
+        AttributeDefinitions: # specify an array of attributes to describe the key schema and indexes for the table. In other words the index which we will use to query the table
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
 
         KeySchema:
-          - AttributeName: "PK"
-            KeyType: "HASH"
-          - AttributeName: "SK"
-            KeyType: "RANGE"
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
         ProvisionedThroughput:
-          ReadCapacityUnits: "1"
-          WriteCapacityUnits: "1"
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
-          - IndexName: "GSI1"
+          - IndexName: GSI1
             KeySchema:
-              - AttributeName: "status"
-                KeyType: "HASH"
+              - AttributeName: status
+                KeyType: HASH
             Projection:
-              ProjectionType: "ALL"
+              ProjectionType: ALL
             ProvisionedThroughput:
-              ReadCapacityUnits: "1"
-              WriteCapacityUnits: "1"
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
