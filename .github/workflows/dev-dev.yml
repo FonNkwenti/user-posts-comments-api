@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
-      region: us-east-2
+      region: us-west-1
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
