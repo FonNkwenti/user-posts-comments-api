@@ -50,11 +50,11 @@ functions:
           # - "*"
           - "dynamodb:PutItem"
         # Resource: "*"
-        # Resource: !GetAtt postsTable.Arn
-        Resource:
-          - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
+        Resource: !GetAtt postsTable.Arn
+        # Resource:
+        #   - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
 
-          - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}/index/GSI1"
+        #   - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}/index/GSI1"
 
 resources:
   Resources:
