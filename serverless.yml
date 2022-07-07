@@ -46,9 +46,9 @@ functions:
       - Effect: "Allow"
         Action:
           # - "*"
-          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
         # Resource: "*"
-        Resource: !GetAtt PostsTable.Arn
+        Resource: !GetAtt postsTable.Arn
 
 resources:
   Resources:

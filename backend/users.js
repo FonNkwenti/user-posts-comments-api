@@ -45,8 +45,8 @@ module.exports.create = async (event) => {
       //statuscode: StatusCode || 200,
       statusCode: 200,
       body: JSON.stringify({
-        message: "Successfully create user",
-      }), // return us an object of the Items that have been written to dynamoDB
+        message: "Successfully created user",
+      }),
     };
   } catch (error) {
     console.log(error);
