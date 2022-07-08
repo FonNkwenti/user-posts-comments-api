@@ -3,3 +3,4 @@ node_modules
 .serverless
 notes.txt
 tests.js
+notes.md
