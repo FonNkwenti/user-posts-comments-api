@@ -1,4 +1,4 @@
-#org: fonnkwenti
+org: fonnkwenti
 app: http-api
 service: sls-crud-api
 
@@ -7,7 +7,6 @@ provider:
   runtime: nodejs16.x
   # stage: dev
   stage: ${sls:stage}
-  # region: us-east-1
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.postsTableName}
     #store DB name which we will be able to access from our Lambdas.
@@ -46,19 +45,31 @@ functions:
     #timeout: 5 # units in seconds
     events:
       - http:
-          path: /users
+          path: /user
           method: POST
     iamRoleStatements:
       - Effect: "Allow"
         Action:
           # - "*"
           - "dynamodb:PutItem"
-        # Resource: "*"
-        Resource: !GetAtt postsTable.Arn
+        Resource: "*"
+        # Resource: !GetAtt postsTable.Arn
+        # Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
         # Resource:
         #   - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
 
         #   - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}/index/GSI1"
+  getUser:
+    handler: backend/users.get
+    events:
+      - http:
+          path: /user/{id}
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource: "*"
 
 resources:
   Resources:

@@ -54,3 +54,31 @@ module.exports.create = async (event) => {
     throw new Error(error);
   }
 };
+
+// get user
+module.exports.get = async (event, context) => {
+  const body = JSON.parse(event.pathParameters);
+  console.log("This is");
+
+  const uniqueId = body.pathParameters.id;
+
+  const getParams = {
+    TableName: tableName,
+    Key: {
+      PK: `USER#${uniqueId}`,
+      SK: `METADATA#${uniqueId}`,
+    },
+  };
+  try {
+    const User = await ddb.get(getParams).promise();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(User["Item"]),
+    };
+  } catch (error) {
+    console.log(error);
+
+    throw new Error(error);
+  }
+};
