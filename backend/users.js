@@ -55,10 +55,7 @@ module.exports.create = async (event) => {
 
 // get user
 module.exports.get = async (event, context) => {
-  //   const body = JSON.parse(event.pathParameters);
-  console.log("This is");
-
-  const uniqueId = body.pathParameters.id;
+  const uniqueId = event.pathParameters.id;
 
   const getParams = {
     TableName: tableName,
