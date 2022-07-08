@@ -6,7 +6,7 @@ Amazon DynamoDB for storing the data
 AWS Lambda for FaaS
 Amazon API Gateway for the API Endpoints
 
-There is a reusable GitHub Actions workflow called `reusable-workflows.yml which is referenced the other workflows which will deploy the app to other environments. The `dev-dev.yml`workflow will deploy the app to the dev environment when you trigger it with a`git push`in the`dev branch`and the`prod-main`will deploy to the prod environment when there is a`git push`trigger in the`main branch`. To deploy to a dev account, you need to provide the access keys of the account in the secrets section of the GitHub Actions Workflow. To deploy to the prod environment, you should provide the access keys of an account in the prod AWS account.
+There is a reusable GitHub Actions workflow called `reusable-workflows.yml` which is referenced by the other workflows to deploy the app to other environments. The `dev-dev.yml` workflow will deploy the app to the dev environment when you trigger it with a `git push` in the `dev branch` and the `prod-main.yml` will deploy to the prod environment when there is a `git push` trigger in the `main branch`. To deploy to a dev account, you need to provide the access keys of the account in the secrets section of the GitHub Actions Workflow. To deploy to the prod environment, you should provide the access keys of an account in the prod AWS account.
 
 The production (prod) and development(dev) environments in this repo are separate AWS Regions in the same AWS Account but in real world scenarios, you would have them in seperate AWS accounts for proper isolation.
 
