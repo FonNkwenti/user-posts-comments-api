@@ -48,6 +48,7 @@ module.exports.create = async (event) => {
   }
 };
 
+//-------------------------------------------------------
 // update post
 
 module.exports.update = async (event, context) => {
@@ -58,7 +59,7 @@ module.exports.update = async (event, context) => {
   const status = body.status;
   const timeStamp = new Date().toISOString;
 
-  const getParams = {
+  const updateParams = {
     TableName: tableName,
     Key: {
       PK: `USER#${userId}`,
@@ -80,7 +81,7 @@ module.exports.update = async (event, context) => {
     ReturnValues: "ALL_NEW",
   };
   try {
-    const updatePost = await ddb.get(getParams).promise();
+    const updatePost = await ddb.get(updateParams).promise();
 
     return {
       statusCode: 200,
