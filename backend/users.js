@@ -10,12 +10,11 @@ const ddb = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.DYNAMODB_TABLE_NAME;
 console.log(tableName);
 
+// Create a User
 module.exports.create = async (event) => {
   const body = JSON.parse(event.body);
   console.log(body);
-  if (!body.item.lenght) {
-    console.log("Validation Error! Please create First Name");
-  }
+
   const uniqueId = v4().toString();
 
   const timeStamp = new Date().toISOString();
@@ -75,19 +74,20 @@ module.exports.get = async (event, context) => {
 };
 module.exports.delete = async (event, context) => {
   const userId = event.pathParameters.id;
+  console.log(userId);
 
-  const deleteParams = {
-    TableName: tableName,
-    Key: {
-      PK: `USER#${userId}`,
-      SK: `METADATA#${userId}`,
-    },
-  };
   try {
+    const deleteParams = {
+      TableName: tableName,
+      Key: {
+        PK: `USER#${userId}`,
+        SK: `METADATA#${userId}`,
+      },
+    };
     await ddb.delete(deleteParams).promise();
 
     return {
-      message: `${event.pathParameters.id} has been deleted`,
+      body: JSON.stringify({ message: "User has been deleted" }),
     };
   } catch (error) {
     console.log(error);
