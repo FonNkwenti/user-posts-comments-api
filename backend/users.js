@@ -44,9 +44,7 @@ module.exports.create = async (event) => {
     return {
       //statuscode: StatusCode || 200,
       statusCode: 200,
-      body: JSON.stringify({
-        message: "Successfully created user",
-      }),
+      body: JSON.stringify(putParams.Item),
     };
   } catch (error) {
     console.log(error);

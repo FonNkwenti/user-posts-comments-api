@@ -52,8 +52,8 @@ functions:
         Action:
           # - "*"
           - "dynamodb:PutItem"
-        Resource: "*"
-        # Resource: !GetAtt postsTable.Arn
+        # Resource: "*"
+        Resource: !GetAtt postsTable.Arn
         # Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
         # Resource:
         #   - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
@@ -70,6 +70,7 @@ functions:
         Action:
           - "dynamodb:GetItem"
         Resource: "*"
+        # Resource: !GetAtt postsTable.Arn
 
 resources:
   Resources:
