@@ -13,9 +13,9 @@ console.log(tableName);
 module.exports.create = async (event) => {
   const body = JSON.parse(event.body);
   console.log(body);
-  //   if (!body.includes(firstName)) {
-  //     console.log("Validation Error! Please create First Name");
-  //   }
+  if (!body.item.lenght) {
+    console.log("Validation Error! Please create First Name");
+  }
   const uniqueId = v4().toString();
 
   const timeStamp = new Date().toISOString();
@@ -23,10 +23,6 @@ module.exports.create = async (event) => {
   const putParams = {
     TableName: tableName,
     Item: {
-      //   pk: "CUSTOMER#" + customer_id,
-      //   sk: "PROFILE#" + customer_id,
-      //   profile_data: profile_data,
-
       PK: `USER#${uniqueId}`,
       SK: `METADATA#${uniqueId}`,
       userId: uniqueId,
@@ -70,6 +66,63 @@ module.exports.get = async (event, context) => {
     return {
       statusCode: 200,
       body: JSON.stringify(User["Item"]),
+    };
+  } catch (error) {
+    console.log(error);
+
+    throw new Error(error);
+  }
+};
+module.exports.delete = async (event, context) => {
+  const userId = event.pathParameters.id;
+
+  const deleteParams = {
+    TableName: tableName,
+    Key: {
+      PK: `USER#${userId}`,
+      SK: `METADATA#${userId}`,
+    },
+  };
+  try {
+    await ddb.delete(deleteParams).promise();
+
+    return {
+      message: `${event.pathParameters.id} has been deleted`,
+    };
+  } catch (error) {
+    console.log(error);
+
+    throw new Error(error);
+  }
+};
+
+// get users posts
+module.exports.getAllPosts = async (event, context) => {
+  console.log(event);
+  console.log(event.pathParameters.id);
+
+  const userId = `USER#${event.pathParameters.id};`;
+  const metadata = `METADATA#${event.pathParameters.id};`;
+
+  try {
+    const userPosts = await ddb
+      .query({
+        TableName: tableName,
+        KeyConditionExpression: `#PK = :userId AND #SK BETWEEN :metadata AND :POST$ `,
+        ExpressionAttributeNames: {
+          "#PK": "userId",
+          "#SK": "metadata",
+        },
+        ExpressionAttributeValues: {
+          ":userId": userId,
+          ":metatdata": metadata,
+        },
+      })
+      .promise();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(userPosts["Item"]),
     };
   } catch (error) {
     console.log(error);

@@ -52,7 +52,7 @@ module.exports.create = async (event) => {
 
 module.exports.update = async (event, context) => {
   const body = JSON.parse(event.body);
-  const postId = event.pathParameters.postId;
+  const postId = event.pathParameters.id;
   const userId = body.userId;
   const postText = body.postText;
   const status = body.status;

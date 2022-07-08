@@ -71,8 +71,20 @@ functions:
           - "dynamodb:GetItem"
         Resource: "*"
         # Resource: !GetAtt postsTable.Arn
+  deleteUser:
+    handler: backend/users.delete
+    events:
+      - http:
+          path: /user/{id}
+          method: DELETE
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:DeleteItem"
+        Resource: "*"
+        # Resource: !GetAtt postsTable.Arn
   createPost:
-    handler: backend/posts.get
+    handler: backend/posts.create
     events:
       - http:
           path: /post
@@ -80,7 +92,7 @@ functions:
     iamRoleStatements:
       - Effect: "Allow"
         Action:
-          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
         Resource: "*"
         # Resource: !GetAtt postsTable.Arn
 
