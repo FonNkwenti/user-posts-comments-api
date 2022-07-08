@@ -28,6 +28,7 @@ module.exports.create = async (event) => {
       SK: `POST#${uniqueId}#${timeStamp}`,
       postId: uniqueId,
       postText: body.postText,
+      status: body.status,
       createOn: timeStamp,
     },
   };
@@ -49,22 +50,41 @@ module.exports.create = async (event) => {
 
 // update post
 
-module.exports.get = async (event, context) => {
-  const postId = event.pathParameters.id;
+module.exports.update = async (event, context) => {
+  const body = JSON.parse(event.body);
+  const postId = event.pathParameters.postId;
+  const userId = body.userId;
+  const postText = body.postText;
+  const status = body.status;
+  const timeStamp = new Date().toISOString;
 
   const getParams = {
     TableName: tableName,
     Key: {
-      PK: `USER#${uniqueId}`,
-      SK: `METADATA#${uniqueId}`,
+      PK: `USER#${userId}`,
+      SK: `POST#${postId}`,
     },
+
+    ExpressionAttributeNames: {
+      "#pt": "postText",
+      "#st": "status",
+    },
+    ExpressionAttributeValues: {
+      ":postText": postText,
+      ":status": status,
+      ":updatedAt": timeStamp,
+    },
+    UpdateExpression:
+      "SET #pt =:postText, #st= :status, updatedAt = :updatedAt",
+
+    ReturnValues: "ALL_NEW",
   };
   try {
-    const User = await ddb.get(getParams).promise();
+    const updatePost = await ddb.get(getParams).promise();
 
     return {
       statusCode: 200,
-      body: JSON.stringify(User["Item"]),
+      body: JSON.stringify(updatePost["Item"]),
     };
   } catch (error) {
     console.log(error);
