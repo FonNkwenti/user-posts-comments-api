@@ -1,74 +1,30 @@
-# REST API for posting & commenting
+# Serverless REST API for creating users, posts and comments
 
-This is a REST API built on AWS via IaC with Serverless Framework.
-Serverless Framework will deploy the following resources to AWS:
+This is a REST API deployed to AWS via IaC with Serverless Framework. Serverless Framework will deploy the following resources to AWS:
 
-- Amazon DynamoDB for storing the data
-- AWS Lambda for FaaS
-- Amazon API Gateway for the API Endpoints
+Amazon DynamoDB for storing the data
+AWS Lambda for FaaS
+Amazon API Gateway for the API Endpoints
 
-Changes are deployed to dev and prod using separate GitHub Actions workflows making use of reusable workflow
+There is a reusable GitHub Actions workflow called `reusable-workflows.yml which is referenced the other workflows which will deploy the app to other environments. The `dev-dev.yml`workflow will deploy the app to the dev environment when you trigger it with a`git push`in the`dev branch`and the`prod-main`will deploy to the prod environment when there is a`git push`trigger in the`main branch`. To deploy to a dev account, you need to provide the access keys of the account in the secrets section of the GitHub Actions Workflow. To deploy to the prod environment, you should provide the access keys of an account in the prod AWS account.
 
 The production (prod) and development(dev) environments in this repo are separate AWS Regions in the same AWS Account but in real world scenarios, you would have them in seperate AWS accounts for proper isolation.
 
-The GitHub Actions Workflows will deploy to separate AWS Regions as an easy way to simulate the workflow.
+</b >
 
 ---
 
-# Entities
+## Entities
 
-[x] User
-[x] Post
-[x] Comment
+- [x] User
+- [x] Post
+- [ ] Comment
 
-#### User
+## Setup
 
--
--
--
--
-
-#### Post
-
--
--
--
-
-#### Comment
-
--
--
--
-- ***
-
-## **Access Patterns**
-
-#### Users
-
-- create users
-- get user
-- delete user
-
-#### Posts
-
-- create posts
-- get posts by user
-- get all posts by users
-
-#### Comments
-
-- create comment on post
-- get all comments on post
-
----
-
-## **Setup**
-
-Clone this repo to your desktop and run `npm install` to install all the dependencies.
-
-You might want to look into `config.json` to make change the port you want to use and set up a SSL certificate.
-
----
+```bash
+npm install
+```
 
 ## **Instructions to deploy**
 
@@ -84,13 +40,19 @@ You might want to look into `config.json` to make change the port you want to 
 cd user-posts-comments-api && npm install
 ```
 
-- Set the AWS credentials for your prod and dev environments in your GitHub Actions Secrets
+- Set the AWS credentials for the GitHub Actions in the Settings/Secrets/Actions Secrets in the GitHb repo. The `dev-dev.yml` and `prod-main.yml` workflows will use these secrets.
 
-_paste image from GitHub Actons_
+```
+DEV_AWS_ACCESS_KEY_ID
+DEV_AWS_SECRET_ACCESS_KEY
+
+PROD_AWS_ACCESS_KEY_ID
+PROD_AWS_SECRET_ACCESS_KEY
+```
 
 <br />
 
-- switch to dev branch to commit your changes which will automatically trigger the GitHub CI/CD to deploy to the dev environment.
+- switch to dev branch to commit your changes which will automatically trigger the GitHub Actions CI/CD to deploy to the dev environment.
 
 ```
 git checkout -b dev
@@ -114,22 +76,66 @@ git push -u origin main
 
 <br />
 
-## Deployment Output
+You should see a similar output in the Workflows deployed for either dev or prod when there is a `git push'. The output contains the outputs from the `serverless deploy` command which includes the API endpoints amongst other things.
 
-**Insert Image of GitHub Actions Workflows**
-**Insert Image of the various Jobs**
-**Insert Image of Serverless deploy logs**
-
-Your API Endpoints will be available in the GitHub Actions Logs
-
+```bash
+/usr/bin/docker run --name cd98f4184ece882e748ea8e45c59c22451203_c068d8 --label 4cd98f --workdir /github/workspace --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e INPUT_ARGS -e HOME -e GITHUB_JOB -e GITHUB_REF -e GITHUB_SHA -e GITHUB_REPOSITORY -e GITHUB_REPOSITORY_OWNER -e GITHUB_RUN_ID -e GITHUB_RUN_NUMBER -e GITHUB_RETENTION_DAYS -e GITHUB_RUN_ATTEMPT -e GITHUB_ACTOR -e GITHUB_WORKFLOW -e GITHUB_HEAD_REF -e GITHUB_BASE_REF -e GITHUB_EVENT_NAME -e GITHUB_SERVER_URL -e GITHUB_API_URL -e GITHUB_GRAPHQL_URL -e GITHUB_REF_NAME -e GITHUB_REF_PROTECTED -e GITHUB_REF_TYPE -e GITHUB_WORKSPACE -e GITHUB_ACTION -e GITHUB_EVENT_PATH -e GITHUB_ACTION_REPOSITORY -e GITHUB_ACTION_REF -e GITHUB_PATH -e GITHUB_ENV -e GITHUB_STEP_SUMMARY -e RUNNER_OS -e RUNNER_ARCH -e RUNNER_NAME -e RUNNER_TOOL_CACHE -e RUNNER_TEMP -e RUNNER_WORKSPACE -e ACTIONS_RUNTIME_URL -e ACTIONS_RUNTIME_TOKEN -e ACTIONS_CACHE_URL -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" -v "/home/runner/work/user-posts-comments-api/user-posts-comments-api":"/github/workspace" 4cd98f:4184ece882e748ea8e45c59c22451203 deploy --stage prod --region us-east-1
+Deploying sls-crud-api to stage prod (us-east-1)
+endpoints:
+  POST - https://y0cvaxz2h7.execute-api.us-east-1.amazonaws.com/prod/user
+  GET - https://y0cvaxz2h7.execute-api.us-east-1.amazonaws.com/prod/user/{id}
+  DELETE - https://y0cvaxz2h7.execute-api.us-east-1.amazonaws.com/prod/user/{id}
+  POST - https://y0cvaxz2h7.execute-api.us-east-1.amazonaws.com/prod/post
+  PUT - https://y0cvaxz2h7.execute-api.us-east-1.amazonaws.com/prod/post/{id}
+  DELETE - https://y0cvaxz2h7.execute-api.us-east-1.amazonaws.com/prod/post/{id}
+functions:
+  createUser: sls-crud-api-prod-createUser (85 kB)
+  getUser: sls-crud-api-prod-getUser (85 kB)
+  deleteUser: sls-crud-api-prod-deleteUser (85 kB)
+  createPost: sls-crud-api-prod-createPost (85 kB)
+  updatePost: sls-crud-api-prod-updatePost (85 kB)
+  deletePost: sls-crud-api-prod-deletePost (85 kB)
+✔ Service deployed to stack sls-crud-api-prod (95s)
 ```
-paste output of your endpoints here
 
-```
+## Usage
+
+With the generated API endpoints, you should be able to perform the following calls
+
+**User**
+
+- create a user
+- get a user
+- delete a user
+
+**Post**
+
+- create a post
+- update a post
+- delete a post
+
+---
+
+</br>
 
 ## Project Status
 
-> Project is: *in progress* I will continue adding more functionality as I continue to learn and experiment
+> Project is: *in progress* 
+> More access patterns will eventually updated such:
+
+#### Access Patterns
+
+- get all posts by a user
+- create comments
+- view comments for each post
+
+#### More Functionality
+
+- Unit tests
+- Integration tests
+- Multi environment CI/CD with approvals
+- Cognito
+- local development
 
 ---
 
@@ -138,5 +144,4 @@ paste output of your endpoints here
 - API Gateway Authorizer Function for AuthO or AWS Cognito
 - Multi Stage deployments with GitHub Actions
 - Unit, mock, integration tests with JEST
-
----
+- ***
