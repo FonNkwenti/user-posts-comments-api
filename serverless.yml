@@ -71,6 +71,18 @@ functions:
           - "dynamodb:GetItem"
         Resource: "*"
         # Resource: !GetAtt postsTable.Arn
+  createPost:
+    handler: backend/posts.get
+    events:
+      - http:
+          path: /post
+          method: POST
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource: "*"
+        # Resource: !GetAtt postsTable.Arn
 
 resources:
   Resources:

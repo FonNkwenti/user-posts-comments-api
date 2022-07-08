@@ -10,6 +10,7 @@ const ddb = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.DYNAMODB_TABLE_NAME;
 console.log(tableName);
 
+// create a post
 module.exports.create = async (event) => {
   const body = JSON.parse(event.body);
   console.log(body);
@@ -23,23 +24,16 @@ module.exports.create = async (event) => {
   const putParams = {
     TableName: tableName,
     Item: {
-      //   pk: "CUSTOMER#" + customer_id,
-      //   sk: "PROFILE#" + customer_id,
-      //   profile_data: profile_data,
-
       PK: `USER#${uniqueId}`,
-      SK: `METADATA#${uniqueId}`,
-      userId: uniqueId,
-      firstName: body.firstName,
-      lastName: body.lastName,
-      age: body.age,
-      emailAddress: body.emailAddress,
+      SK: `POST#${uniqueId}#${timeStamp}`,
+      postId: uniqueId,
+      postText: body.postText,
       createOn: timeStamp,
     },
   };
   try {
-    let createUser;
-    createUser = await ddb.put(putParams).promise();
+    let createPost;
+    createPost = await ddb.put(putParams).promise();
 
     return {
       //statuscode: StatusCode || 200,
@@ -53,15 +47,16 @@ module.exports.create = async (event) => {
   }
 };
 
-// get user
+// update post
+
 module.exports.get = async (event, context) => {
-  const userId = event.pathParameters.id;
+  const postId = event.pathParameters.id;
 
   const getParams = {
     TableName: tableName,
     Key: {
-      PK: `USER#${userId}`,
-      SK: `METADATA#${userId}`,
+      PK: `USER#${uniqueId}`,
+      SK: `METADATA#${uniqueId}`,
     },
   };
   try {
