@@ -9,30 +9,9 @@ provider:
   stage: ${sls:stage}
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.postsTableName}
-    #store DB name which we will be able to access from our Lambdas.
-    # DYNAMODB_TABLE_NAME: ${self:service}-${sls:stage} #store DB name which we will be able to access from our Lambdas.
-
-  httpApi:
-    cors: true
-  # iam:
-  #   role:
-  #     statements:
-  #       - Effect: "Allow"
-  #         Action:
-  #           - dynamodb:Scan
-  #           - dynamodb:Query
-  #           - dynamodb:PutItem
-  #           - dynamodb:UpdateItem
-  #           - dynamodb:GetItem
-  #           - dynamodb:DeleteItem
-  #           - "*"
-  #         #Resource: !GetAtt postsTable.Arn #4 the permissions will be applied to the DynamoDB table itself and the second resource is an index on the table
-  #         Resource: "*"
 
 custom:
-  # postsTableName: posts-comments-table
-  postsTableName: posts-comments-table-${sls:stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
-  #   postsTableName: posts-table-${self:provider.stage} # store our table name in a custom resource. we will append the stage to the end of the table. We will have a unique table for each stage
+  postsTableName: posts-comments-table-${sls:stage}
 
 plugins:
   - serverless-iam-roles-per-function
@@ -47,15 +26,9 @@ functions:
     iamRoleStatements:
       - Effect: "Allow"
         Action:
-          # - "*"
           - "dynamodb:PutItem"
-        Resource: "*"
-        # Resource: !GetAtt postsTable.Arn
-        # Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
-        # Resource:
-        #   - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
+        Resource: !GetAtt postsTable.Arn
 
-        #   - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}/index/GSI1"
   getUser:
     handler: backend/users.get
     events:
@@ -66,8 +39,7 @@ functions:
       - Effect: "Allow"
         Action:
           - "dynamodb:GetItem"
-        Resource: "*"
-        # Resource: !GetAtt postsTable.Arn
+        Resource: !GetAtt postsTable.Arn
   deleteUser:
     handler: backend/users.delete
     events:
@@ -78,8 +50,7 @@ functions:
       - Effect: "Allow"
         Action:
           - "dynamodb:DeleteItem"
-        Resource: "*"
-        # Resource: !GetAtt postsTable.Arn
+        Resource: !GetAtt postsTable.Arn
   createPost:
     handler: backend/posts.create
     events:
@@ -90,8 +61,7 @@ functions:
       - Effect: "Allow"
         Action:
           - "dynamodb:PutItem"
-        Resource: "*"
-        # Resource: !GetAtt postsTable.Arn
+        Resource: !GetAtt postsTable.Arn
   updatePost:
     handler: backend/posts.update
     events:
@@ -102,8 +72,7 @@ functions:
       - Effect: "Allow"
         Action:
           - "dynamodb:UpdateItem"
-        Resource: "*"
-        # Resource: !GetAtt postsTable.Arn
+        Resource: !GetAtt postsTable.Arn
   deletePost:
     handler: backend/posts.delete
     events:
@@ -114,17 +83,15 @@ functions:
       - Effect: "Allow"
         Action:
           - "dynamodb:DeleteItem"
-        Resource: "*"
-        # Resource: !GetAtt postsTable.Arn
+        Resource: !GetAtt postsTable.Arn
 
 resources:
   Resources:
     postsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.postsTableName} # this is the name that will appear on the AWS Cloud. we will pull the name from our custom resource
-        # TableName: ${self:provider.environment.DYNAMODB_TABLE_NAME} # this is the name that will appear on the AWS Cloud. we will pull the name from our custom resource
-        AttributeDefinitions: # specify an array of attributes to describe the key schema and indexes for the table. In other words the index which we will use to query the table
+        TableName: ${self:custom.postsTableName}
+        AttributeDefinitions:
           - AttributeName: PK
             AttributeType: S
           - AttributeName: SK
