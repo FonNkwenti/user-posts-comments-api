@@ -10,6 +10,7 @@ const ddb = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.DYNAMODB_TABLE_NAME;
 console.log(tableName);
 
+//-----------------------------------------
 // create a post
 module.exports.create = async (event) => {
   const body = JSON.parse(event.body);
@@ -27,6 +28,7 @@ module.exports.create = async (event) => {
       PK: `USER#${uniqueId}`,
       SK: `POST#${uniqueId}#${timeStamp}`,
       postId: uniqueId,
+      userId: body.userId,
       postText: body.postText,
       status: body.status,
       createOn: timeStamp,
@@ -57,13 +59,14 @@ module.exports.update = async (event, context) => {
   const userId = body.userId;
   const postText = body.postText;
   const status = body.status;
-  const timeStamp = new Date().toISOString;
+  const createdOn = body.createdOn;
+  const timeStamp = new Date().toISOString();
 
   const updateParams = {
     TableName: tableName,
     Key: {
       PK: `USER#${userId}`,
-      SK: `POST#${postId}`,
+      SK: `POST#${postId}#${createdOn}`,
     },
 
     ExpressionAttributeNames: {
@@ -73,19 +76,64 @@ module.exports.update = async (event, context) => {
     ExpressionAttributeValues: {
       ":postText": postText,
       ":status": status,
-      ":updatedAt": timeStamp,
+      ":createdOn": createdOn,
     },
-    UpdateExpression:
-      "SET #pt =:postText, #st= :status, updatedAt = :updatedAt",
+    UpdateExpression: "SET #pt = :postText,#st=:status,updatedAt = :updatedAt",
 
     ReturnValues: "ALL_NEW",
   };
-  try {
-    const updatePost = await ddb.get(updateParams).promise();
 
+  console.log(updateParams);
+  try {
+    const updatePost = await ddb.update(updateParams).promise();
     return {
       statusCode: 200,
       body: JSON.stringify(updatePost["Item"]),
+    };
+  } catch (error) {
+    console.log(error);
+
+    throw new Error(error);
+  }
+};
+//-------------------------------------------------------
+// delete post
+
+module.exports.delete = async (event, context) => {
+  const body = JSON.parse(event.body);
+  console.log(body);
+  const postId = event.pathParameters.id;
+  console.log(postId);
+  const userId = body.userId.toString();
+  console.log(userId);
+  const createdOn = body.createdOn.toString();
+
+  const deleteParams = {
+    TableName: tableName,
+    Key: {
+      PK: `USER#${userId}`,
+      SK: `POST#${postId}#${createdOn}`,
+    },
+
+    // ExpressionAttributeNames: {
+    //   "#pt": "postText",
+    //   "#st": "status",
+    // },
+    // ExpressionAttributeValues: {
+    //   ":postText": postText,
+    //   ":status": status,
+    //   ":deletedAt": timeStamp,
+    // },
+    // deleteExpression:
+    //   "SET #pt =:postText, #st= :status, deletedAt = :deletedAt",
+
+    // ReturnValues: "ALL_NEW",
+  };
+  console.log(deleteParams);
+  try {
+    await ddb.delete(deleteParams).promise();
+    return {
+      body: JSON.stringify({ message: "User's post has been deleted" }),
     };
   } catch (error) {
     console.log(error);

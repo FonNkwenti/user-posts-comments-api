@@ -72,6 +72,8 @@ module.exports.get = async (event, context) => {
     throw new Error(error);
   }
 };
+
+// Delete user
 module.exports.delete = async (event, context) => {
   const userId = event.pathParameters.id;
   console.log(userId);
@@ -88,41 +90,6 @@ module.exports.delete = async (event, context) => {
 
     return {
       body: JSON.stringify({ message: "User has been deleted" }),
-    };
-  } catch (error) {
-    console.log(error);
-
-    throw new Error(error);
-  }
-};
-
-// get users posts
-module.exports.getAllPosts = async (event, context) => {
-  console.log(event);
-  console.log(event.pathParameters.id);
-
-  const userId = `USER#${event.pathParameters.id};`;
-  const metadata = `METADATA#${event.pathParameters.id};`;
-
-  try {
-    const userPosts = await ddb
-      .query({
-        TableName: tableName,
-        KeyConditionExpression: `#PK = :userId AND #SK BETWEEN :metadata AND :POST$ `,
-        ExpressionAttributeNames: {
-          "#PK": "userId",
-          "#SK": "metadata",
-        },
-        ExpressionAttributeValues: {
-          ":userId": userId,
-          ":metatdata": metadata,
-        },
-      })
-      .promise();
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(userPosts["Item"]),
     };
   } catch (error) {
     console.log(error);

@@ -1,4 +1,4 @@
-# org: fonnkwenti
+org: fonnkwenti
 app: http-api
 service: sls-crud-api
 
@@ -12,8 +12,8 @@ provider:
     #store DB name which we will be able to access from our Lambdas.
     # DYNAMODB_TABLE_NAME: ${self:service}-${sls:stage} #store DB name which we will be able to access from our Lambdas.
 
-  # httpApi:
-  #   cors: true
+  httpApi:
+    cors: true
   # iam:
   #   role:
   #     statements:
@@ -101,7 +101,19 @@ functions:
     iamRoleStatements:
       - Effect: "Allow"
         Action:
-          - "dynamodb:PutItem"
+          - "dynamodb:UpdateItem"
+        Resource: "*"
+        # Resource: !GetAtt postsTable.Arn
+  deletePost:
+    handler: backend/posts.delete
+    events:
+      - http:
+          path: /post/{id}
+          method: DELETE
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:DeleteItem"
         Resource: "*"
         # Resource: !GetAtt postsTable.Arn
 
