@@ -145,3 +145,5 @@ With the generated API endpoints, you should be able to perform the following ca
 - Multi Stage deployments with GitHub Actions
 - Unit, mock, integration tests with JEST
 - ***
+
+# END
