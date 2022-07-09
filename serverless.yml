@@ -84,6 +84,17 @@ functions:
         Action:
           - "dynamodb:DeleteItem"
         Resource: !GetAtt postsTable.Arn
+  createComment:
+    handler: backend/comment.create
+    events:
+      - http:
+          path: /comment
+          method: PUT
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resource: !GetAtt postTable.Arn
 
 resources:
   Resources:

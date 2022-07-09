@@ -8,7 +8,7 @@ const { v4 } = require("uuid");
 const ddb = new AWS.DynamoDB.DocumentClient();
 
 const tableName = process.env.DYNAMODB_TABLE_NAME;
-console.log(tableName);
+// console.log(tableName);
 
 //-----------------------------------------
 // create a post
