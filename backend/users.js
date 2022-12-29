@@ -76,6 +76,10 @@ module.exports.get = async (event, context) => {
 // Delete user
 module.exports.delete = async (event, context) => {
   const userId = event.pathParameters.id;
+
+  if (!userId) {
+    throw Error("Please provide a user ID");
+  }
   console.log(userId);
 
   try {

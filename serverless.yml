@@ -5,8 +5,9 @@ service: sls-crud-api
 provider:
   name: aws
   runtime: nodejs16.x
-  # stage: dev
-  stage: ${sls:stage}
+  stage: dev
+  # stage: ${sls:stage}
+  lambdaHashingVersion: 20201221
   environment:
     DYNAMODB_TABLE_NAME: ${self:custom.postsTableName}
 
@@ -62,6 +63,7 @@ functions:
         Action:
           - "dynamodb:PutItem"
         Resource: !GetAtt postsTable.Arn
+
   updatePost:
     handler: backend/posts.update
     events:
@@ -73,6 +75,7 @@ functions:
         Action:
           - "dynamodb:UpdateItem"
         Resource: !GetAtt postsTable.Arn
+
   deletePost:
     handler: backend/posts.delete
     events:
@@ -84,8 +87,9 @@ functions:
         Action:
           - "dynamodb:DeleteItem"
         Resource: !GetAtt postsTable.Arn
+
   createComment:
-    handler: backend/comment.create
+    handler: backend/comments.create
     events:
       - http:
           path: /comment
